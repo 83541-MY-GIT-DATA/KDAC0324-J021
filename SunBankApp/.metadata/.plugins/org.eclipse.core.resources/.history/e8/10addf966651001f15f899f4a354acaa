@@ -1,0 +1,8 @@
+package com.sunBank.entities;
+
+import javax.persistence.Entity;
+
+@Entity
+public class SavingAccount extends BankAccount {
+	private double interestRate;
+}

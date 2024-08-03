@@ -1,0 +1,14 @@
+package com.app.service;
+
+import java.util.List;
+
+import com.app.dto.ProductRequestDto;
+import com.app.dto.ProductResponseDto;
+import com.app.entities.Product;
+
+public interface ProductService {
+
+	ProductResponseDto addProducts(ProductRequestDto dto);
+	
+//	ProductResponseDto displayProducts(Long id);
+}
