@@ -1,0 +1,7 @@
+package com.sunBank.entities;
+import javax.persistence.*;
+
+@Entity
+public class BankAccount {
+	
+}

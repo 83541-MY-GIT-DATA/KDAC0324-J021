@@ -1,0 +1,6 @@
+package com.sunBank.services;
+
+public interface CustomerService {
+	
+	Customer searchByEmail(String email);
+}

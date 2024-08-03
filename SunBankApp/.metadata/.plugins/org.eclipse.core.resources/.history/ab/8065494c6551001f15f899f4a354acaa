@@ -1,0 +1,5 @@
+package com.sunBank.entities;
+
+public class CurrentAccount {
+
+}

@@ -1,0 +1,55 @@
+package com.app.service;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.app.Exception.PratikshaException;
+import com.app.dao.CategoryDao;
+import com.app.dao.ProductDao;
+import com.app.dto.ProductRequestDto;
+import com.app.dto.ProductResponseDto;
+import com.app.entities.Category;
+import com.app.entities.Product;
+
+@Service
+@Transactional
+public class ProductServiceImpl implements ProductService{
+
+	@Autowired
+	private CategoryDao categoryDao;
+	
+	@Autowired
+	private ProductDao productDao;
+	
+	@Autowired
+	private ModelMapper mapper;
+	
+	@Override
+	public ProductResponseDto addProducts(ProductRequestDto dto) {
+		
+		System.out.println(dto);
+		
+		Category category = categoryDao.findById(dto.getCategoryId()).orElseThrow(()-> new PratikshaException("invalid id !!"));
+		
+		Product newProduct = mapper.map(dto,Product.class);
+		
+		newProduct.setCategory(category);
+		
+		Product pd = productDao.save(newProduct);
+		
+		return new ProductResponseDto(pd.getName());
+	}
+
+//	@Override
+//	public Product displayProducts(Long id) {
+//		
+//		Product product = productDao.findById(id).orElseThrow(()-> new PratikshaException("Invalid id !!"));
+//			
+//		return mapper.map(product,Product.class);
+//	}
+}
