@@ -20,7 +20,7 @@ import lombok.*;
 @DiscriminatorColumn(name = "Type",length = 4)
 public class BankAccount {
 	@Id
-	private String id;
+	private String Id;
 	
 	private double balance;
 	
