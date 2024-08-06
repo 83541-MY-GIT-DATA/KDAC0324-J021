@@ -1,0 +1,7 @@
+package com.sunBank.services;
+
+import com.sunBank.dtos.CustomerDto;
+
+public interface BankAccountService {
+	CustomerDto saveCustomer(CustomerDto customerDto)
+}

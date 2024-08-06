@@ -2,10 +2,9 @@ package com.sunBank.dtos;
 
 import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class CustomerDto {
-	private String message;
+	private Long id;
+	private String name;
+	private String email;
 }

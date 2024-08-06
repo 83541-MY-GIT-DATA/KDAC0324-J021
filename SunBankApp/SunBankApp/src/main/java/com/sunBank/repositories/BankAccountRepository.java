@@ -1,0 +1,17 @@
+package com.sunBank.repositories;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.sunBank.entities.BankAccount;
+import com.sunBank.entities.Customer;
+
+public interface BankAccountRepository extends JpaRepository<BankAccount,String> {
+	Page<BankAccount> findAll(Pageable pageable);
+	List<BankAccount> findByCustomer(Customer customer);
+	Optional<BankAccount> findById(String accountNumber);
+}

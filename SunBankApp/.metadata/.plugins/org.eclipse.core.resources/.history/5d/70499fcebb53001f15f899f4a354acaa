@@ -1,0 +1,19 @@
+package com.sunBank.services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.sunBank.dtos.CustomerDto;
+import com.sunBank.exceptions.CustomerNotFoundException;
+import com.sunBank.repositories.CustomerRepository;
+
+public class BankAccountServiceImpl implements BankAccountService {
+
+	@Autowired
+	private CustomerRepository customerRepository;
+	@Override
+	public CustomerDto saveCustomer(CustomerDto customerDto) throws CustomerNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+}

@@ -1,0 +1,5 @@
+package com.sunBank.exceptions;
+
+public class BalanceNotFoundException extends Exception{
+	private String message;
+}
