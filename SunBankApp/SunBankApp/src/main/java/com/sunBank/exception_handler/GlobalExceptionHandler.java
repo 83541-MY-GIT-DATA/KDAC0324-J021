@@ -1,10 +1,15 @@
 package com.sunBank.exception_handler;
 
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.sunBank.custom_exception.ResourceNotFoundException;
+import com.sunBank.dtos.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -12,6 +17,13 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e)
 	{
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getAllErrors().)
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getFieldErrors().stream()
+				.collect(Collectors.toMap(f-> f.getField(), f-> f.getDefaultMessage())));
+	}
+	
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException r)
+	{
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(r.getMessage()));
 	}
 }
