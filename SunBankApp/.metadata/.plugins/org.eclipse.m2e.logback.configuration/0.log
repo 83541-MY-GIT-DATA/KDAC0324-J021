@@ -926,6 +926,7 @@
 2024-08-03 15:58:52,069 [Worker-93: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
 2024-08-03 15:58:52,069 [Worker-93: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered properties files.
 2024-08-03 15:58:52,069 [Worker-93: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\PG-DAC\Project\SunBankApp\SunBankApp\src\test\resources
+<<<<<<< HEAD
 2024-08-03 17:06:08,379 [Worker-109: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
 2024-08-03 17:06:08,381 [Worker-109: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered properties files.
 2024-08-03 17:06:08,385 [Worker-109: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
@@ -4444,3 +4445,6 @@
 2024-08-07 17:48:52,304 [Worker-46560: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
 2024-08-07 17:48:52,304 [Worker-46560: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered properties files.
 2024-08-07 17:48:52,304 [Worker-46560: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\PG-DAC\Project\SunBankApp\SunBankApp\src\test\resources
+=======
+2024-08-06 11:09:06,604 [Worker-0: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+>>>>>>> 533e0a436d2c5d841fc89322ab24231d9eeadfe4
