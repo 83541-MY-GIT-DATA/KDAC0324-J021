@@ -11,7 +11,10 @@ import com.sunBank.entities.BankAccount;
 import com.sunBank.entities.Customer;
 
 public interface BankAccountRepository extends JpaRepository<BankAccount,String> {
+	
 	Page<BankAccount> findAll(Pageable pageable);
+	
 	List<BankAccount> findByCustomer(Customer customer);
+	
 	Optional<BankAccount> findById(String accountNumber);
 }

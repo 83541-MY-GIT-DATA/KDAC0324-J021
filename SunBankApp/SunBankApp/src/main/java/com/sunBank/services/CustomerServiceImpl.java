@@ -11,12 +11,5 @@ import com.sunBank.repositories.CustomerRepository;
 @Service
 @Transactional
 public class CustomerServiceImpl implements CustomerService {
-	@Autowired
-	private CustomerRepository customerRepository;
-
-	@Override
-	public Customer searchByEmail(String email) {
-		Customer newCustomer = customerRepository.findByEmail(email);
-		return newCustomer;
-	}
+	
 }

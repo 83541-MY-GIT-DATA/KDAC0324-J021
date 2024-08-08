@@ -25,4 +25,14 @@ public interface AccountUtils {
 		
 		return year + randNum;
 	}
+	
+	public static String generateOTP()
+	{
+		int min = 1000;
+		int max = 9999;
+		
+		int randomNumber = (int)Math.floor(Math.random()*(max-min+1))+min;
+		
+		return String.valueOf(randomNumber);
+	}
 }

@@ -1,0 +1,8 @@
+package com.sunBank.dtos;
+
+import java.util.List;
+
+public class BankAccountsDto {
+	List<BankAccountDto> bankAccountDtos;
+	int totalPage;
+}

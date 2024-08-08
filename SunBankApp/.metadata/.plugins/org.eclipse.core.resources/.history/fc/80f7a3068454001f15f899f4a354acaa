@@ -1,0 +1,7 @@
+package com.sunBank.services;
+
+import com.sunBank.dtos.EmailDetails;
+
+public interface EmailService {
+	void sendEmailAlert(EmailDetails emailDetails);
+}

@@ -1,0 +1,15 @@
+package com.sunBank.dtos;
+
+import lombok.Data;
+
+@Data
+public class AccountHistoryDto {
+	
+    public  String accountId;
+    public long customerId;
+    private double balance ;
+    private int currentPage;
+    private int totalPages;
+    private int pageSize;
+    List<AccountOperationDTO> accountOperationDTOList;
+}

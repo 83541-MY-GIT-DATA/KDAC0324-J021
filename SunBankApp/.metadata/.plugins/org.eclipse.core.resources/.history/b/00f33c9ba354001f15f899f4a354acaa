@@ -1,0 +1,35 @@
+package com.sunBank.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.sunBank.dtos.BankAccountDto;
+import com.sunBank.dtos.BankAccountsDto;
+import com.sunBank.exceptions.BankAccountNotFound;
+import com.sunBank.services.BankAccountServiceImpl;
+import com.sunBank.services.BankStatement;
+
+@RestController
+public class BankAccountRestController {
+	
+	@Autowired
+	private BankAccountServiceImpl bankAccountServiceImpl;
+	
+	@Autowired
+	private BankStatement bankStatement;
+	
+	@GetMapping("/accounts/{accountId}")
+	public BankAccountDto getBankAccount(@PathVariable String accountId) throws BankAccountNotFound
+	{
+		return bankAccountServiceImpl.getBankAccount(accountId);
+	}
+	
+	@GetMapping("/Account/searchAccount")
+	public BankAccountsDto getBankAccount(@RequestParam(name = "page",defaultValue = "0")int page) throws BankAccountNotFound
+	{
+		return bankAccountServiceImpl.getBankAccountList(page);
+	}
+}

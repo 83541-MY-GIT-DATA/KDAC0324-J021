@@ -1,0 +1,14 @@
+package com.sunBank.services;
+
+import org.springframework.stereotype.Component;
+
+import com.sunBank.repositories.AccountOperationRepository;
+
+import lombok.AllArgsConstructor;
+
+@Component
+@AllArgsConstructor
+public class BankStatement {
+
+	private AccountOperationRepository accountOperationRepository;
+}

@@ -1,0 +1,93 @@
+package com.sunBank.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.sunBank.dtos.BankAccountDto;
+import com.sunBank.dtos.CustomerDto;
+import com.sunBank.dtos.CustomersDto;
+import com.sunBank.exceptions.CustomerNotFoundException;
+import com.sunBank.repositories.CustomerRepository;
+import com.sunBank.services.BankAccountService;
+import com.sunBank.services.CustomerService;
+import com.sunBank.services.EmailService;
+
+@RestController
+public class CustomerRestController {
+	
+	@Autowired
+	private BankAccountService bankAccountService;
+	
+	@Autowired
+	private EmailService emailService;
+	
+	@Autowired
+	private CustomerService customerService;
+	
+	@Autowired
+	private CustomerRepository customerRepository;
+	
+	// display customers using page 
+	@GetMapping("/customers/all/{page}")
+	public List<CustomerDto> customers(@PathVariable int page)
+	{
+		return bankAccountService.listCustomers(page);
+	}
+	
+	// display account list of customer  using id 
+	@GetMapping("/customers/{id}/accounts")
+	public List<BankAccountDto> accountsListOfCustomer(@PathVariable (name = "id") Long customerId)
+	{
+		return bankAccountService.bankAccountListOfCustomer(customerId);
+	}
+	
+	// display customers using id
+	@GetMapping("/customers/{id}")
+	public CustomerDto getCustomer(@PathVariable (name = "id") Long customerId) throws CustomerNotFoundException
+	{
+		return bankAccountService.getCustomer(customerId);
+	}
+	
+	// display customers by name 
+	@GetMapping("/customers/name/{name}")
+	public CustomerDto getCustomerByname(@PathVariable(name = "name") String name)
+	{
+		return bankAccountService.getCustomerByName(name);
+	}
+	
+	@GetMapping("/customers/search")
+	public CustomersDto getCustomerByName(@RequestParam(name = "keyword",defaultValue = "") String keyword,@RequestParam(name = "page",defaultValue = "0") int page) throws CustomerNotFoundException
+	{
+		CustomersDto customersDto = bankAccountService.getCustomerByName("%" + keyword + "%", page);
+		return customersDto;
+	}
+	
+	@PostMapping("/customers/save")
+	public CustomerDto saveCustomer(@RequestBody CustomerDto customerDto) throws CustomerNotFoundException
+	{
+		return bankAccountService.saveCustomer(customerDto);
+	}
+	
+	@PutMapping("/customers/{customerId}")
+	public CustomerDto updateCustomer(@PathVariable Long customerId,@RequestBody CustomerDto customerDto)
+	{
+		customerDto.setId(customerId);
+		return bankAccountService.updateCustomer(customerDto);
+	}
+	
+	@DeleteMapping("/customers/{customerId}")
+	public void deleteCustomer(@PathVariable Long customerId)
+	{
+		bankAccountService.deleteCustomer(customerId);
+	}
+	
+}
