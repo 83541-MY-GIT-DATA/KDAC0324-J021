@@ -1,0 +1,7 @@
+package com.sunBank.dtos;
+
+import com.sunBank.entities.BankAccount;
+
+public class CurrentBankAccountDto extends BankAccount{
+
+}

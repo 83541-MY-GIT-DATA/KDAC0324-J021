@@ -1,0 +1,23 @@
+package com.sunBank.services;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.sunBank.dtos.CurrentBankAccountDto;
+import com.sunBank.dtos.CustomerDto;
+import com.sunBank.dtos.SavingBankAccountDto;
+import com.sunBank.exceptions.CustomerNotFoundException;
+
+@Service
+public interface BankAccountService {
+	CustomerDto saveCustomer(CustomerDto customerDto) throws CustomerNotFoundException;
+	
+	SavingBankAccountDto saveSavingBankAccount(double initialBalance, double interestRate, Long customerId) throws CustomerNotFoundException;
+	
+	CurrentBankAccountDto saveCurrentBankAccount(double initialBalance , double overdraft,Long customerId) throws CustomerNotFoundException;
+	
+	List<CustomerDto> listCustomers(int page);
+	
+	List<Customer> listCustomer();
+}

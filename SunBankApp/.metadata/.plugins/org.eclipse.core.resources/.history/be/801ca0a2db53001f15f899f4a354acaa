@@ -1,0 +1,7 @@
+package com.sunBank.utils;
+
+public interface AccountUtils {
+
+	public static final String Account_Exists_CODE = "001";
+	public static final String Account_Exists_MESSAGE = "User already exists with this email";
+}

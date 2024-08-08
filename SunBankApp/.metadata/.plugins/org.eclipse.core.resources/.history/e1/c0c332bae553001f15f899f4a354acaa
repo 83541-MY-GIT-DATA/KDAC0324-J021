@@ -1,0 +1,10 @@
+package com.sunBank.dtos;
+
+import com.sunBank.entities.BankAccount;
+
+import lombok.Data;
+
+@Data
+public class CurrentBankAccountDto extends BankAccount{
+
+}

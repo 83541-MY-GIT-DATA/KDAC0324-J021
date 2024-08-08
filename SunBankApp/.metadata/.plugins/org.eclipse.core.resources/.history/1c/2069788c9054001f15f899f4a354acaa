@@ -1,0 +1,45 @@
+package com.sunBank.services;
+
+import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.sunBank.entities.AccountOperation;
+import com.sunBank.entities.Customer;
+import com.sunBank.repositories.AccountOperationRepository;
+import com.sunBank.repositories.BankAccountRepository;
+
+import lombok.AllArgsConstructor;
+
+@Component
+@AllArgsConstructor
+public class BankStatement {
+
+	private AccountOperationRepository accountOperationRepository;
+	private BankAccountRepository bankAccountRepository;
+	private EmailService emailService;
+	
+	private static final String FILE="E:\\PG-DAC\\Statemnt.pdf";
+	
+	
+	public List<AccountOperation> generateStatement(String accountNumber) throws ParseException,FileNotFoundException
+	{
+		List<AccountOperation> operationList = new ArrayList<AccountOperation>();
+		
+		try
+		{
+			accountOperationRepository.findAll().stream()
+									.forEach(operation ->{
+										if(operation.getBankAccount().getId().equals(accountNumber))
+											operationList.add(operation);
+									});
+		}catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+		Customer customer = bankAccountRepository.findById(accountNumber).orElseThrow().getCustomer();
+	}
+}

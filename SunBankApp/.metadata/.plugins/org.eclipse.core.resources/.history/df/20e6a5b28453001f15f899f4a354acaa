@@ -1,0 +1,8 @@
+package com.sunBank.dtos;
+
+import java.time.LocalDateTime;
+
+public class ApiResponse {
+	private String message;
+	private LocalDateTime timeStamp;
+}

@@ -1,0 +1,6 @@
+package com.sunBank.utils;
+
+public interface AccountUtils {
+
+	
+}

@@ -1,0 +1,5 @@
+package com.sunBank.exception_handler;
+
+public class GlobalExceptionHandler {
+
+}
