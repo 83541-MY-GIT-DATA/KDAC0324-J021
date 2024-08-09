@@ -1,0 +1,9 @@
+package com.sunBank.services;
+
+import com.sunBank.dtos.CustomerDto;
+import com.sunBank.exceptions.CustomerNotFoundException;
+
+public interface BankAccountService {
+	CustomerDto saveCustomer(CustomerDto customerDto) throws CustomerNotFoundException;
+	
+}

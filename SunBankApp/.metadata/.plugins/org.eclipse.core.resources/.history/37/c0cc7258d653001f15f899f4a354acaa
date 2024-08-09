@@ -1,0 +1,21 @@
+package com.sunBank.services;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sunBank.dtos.EmailDetails;
+
+@Service
+public class EmailServiceImpl implements EmailService {
+
+	@Autowired
+	private Java
+	@Override
+	public void sendEmailAlert(EmailDetails emailDetails) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

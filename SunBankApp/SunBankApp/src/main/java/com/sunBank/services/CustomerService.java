@@ -1,8 +1,8 @@
 package com.sunBank.services;
 
-import com.sunBank.entities.Customer;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface CustomerService {
 	
-	Customer searchByEmail(String email);
 }

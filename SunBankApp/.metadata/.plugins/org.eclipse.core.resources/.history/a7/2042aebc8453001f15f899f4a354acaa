@@ -1,0 +1,11 @@
+package com.sunBank.dtos;
+
+import java.time.LocalDateTime;
+
+import lombok.Getter;
+
+@Getter
+public class ApiResponse {
+	private String message;
+	private LocalDateTime timeStamp;
+}

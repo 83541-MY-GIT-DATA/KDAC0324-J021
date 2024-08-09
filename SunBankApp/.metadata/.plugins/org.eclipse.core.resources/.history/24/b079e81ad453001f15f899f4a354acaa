@@ -1,0 +1,5 @@
+package com.sunBank.services;
+
+public interface EmailService {
+
+}

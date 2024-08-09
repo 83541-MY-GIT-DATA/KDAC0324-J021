@@ -1,0 +1,23 @@
+package com.sunBank.mappers;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sunBank.dtos.CustomerDto;
+import com.sunBank.entities.Customer;
+
+@Service
+public class BankAccountMapperImplementation {
+	
+	@Autowired   // here that class that variable mapper implemenation
+	BankAccountMapperImplementation bankAccountMapperImplementation;
+	
+	public CustomerDto fromCustomer(Customer customer)
+	{
+		CustomerDto customerDto = new CustomerDto();
+		BeanUtils.copyProperties(customer, customerDto);
+		return customerDto;
+	}
+	
+}

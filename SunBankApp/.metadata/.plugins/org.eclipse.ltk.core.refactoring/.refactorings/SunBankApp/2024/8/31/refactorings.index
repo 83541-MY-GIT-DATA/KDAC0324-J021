@@ -16,3 +16,5 @@
 1722661902211	Delete element
 1722661904187	Delete element
 1722680085912	Rename package 'com.sunBank.controller'
+1722685476901	Rename type 'BalanceNotFoundException'
+1722685815195	Rename package 'com.sunBank.custome_exception'

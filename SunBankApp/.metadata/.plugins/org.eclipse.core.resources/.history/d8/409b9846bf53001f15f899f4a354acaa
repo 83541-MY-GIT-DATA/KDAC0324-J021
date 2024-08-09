@@ -1,0 +1,18 @@
+package com.sunBank.dtos;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class EmailDetails {
+	
+	private String recipient;
+	private String messageBody;
+	private String subject;
+	private String attachment;
+	
+}
