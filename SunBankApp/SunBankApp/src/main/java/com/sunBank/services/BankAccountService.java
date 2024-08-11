@@ -44,7 +44,7 @@ public interface BankAccountService {
 	
 	CustomerDto getCustomerByName(String name);
 	
-	CustomersDto getCustomerByName(String keyword,int page) throws CustomerNotFoundException;
+	//CustomersDto getCustomerByName(String keyword,int page) throws CustomerNotFoundException;
 	
 	List<AccountOperationDto> accountOperationHistory(String accountId);
 	

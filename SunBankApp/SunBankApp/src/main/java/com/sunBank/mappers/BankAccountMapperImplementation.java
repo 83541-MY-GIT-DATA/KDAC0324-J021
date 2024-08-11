@@ -16,8 +16,8 @@ import com.sunBank.entities.SavingAccount;
 @Service
 public class BankAccountMapperImplementation {
 	
-	@Autowired   // here that class that variable mapper implemenation
-	BankAccountMapperImplementation bankAccountMapperImplementation;
+	//@Autowired   // here that class that variable mapper implemenation
+	//this this;
 	
 	public CustomerDto fromCustomer(Customer customer)
 	{
@@ -37,7 +37,7 @@ public class BankAccountMapperImplementation {
 	{
 		SavingBankAccountDto savingBankAccountDto = new SavingBankAccountDto();
 		BeanUtils.copyProperties(savingAccount, savingBankAccountDto);
-		savingBankAccountDto.setCustomerDTO(bankAccountMapperImplementation.fromCustomer(savingAccount.getCustomer()));
+		savingBankAccountDto.setCustomerDTO(this.fromCustomer(savingAccount.getCustomer()));
 		savingBankAccountDto.setType("saving account");
 		return savingBankAccountDto;
 	}
@@ -46,7 +46,7 @@ public class BankAccountMapperImplementation {
 	{
 		SavingAccount savingAccount = new SavingAccount();
 		BeanUtils.copyProperties(savingBankAccountDto, savingAccount);
-		savingAccount.setCustomer(bankAccountMapperImplementation.fromCustomerDto(savingBankAccountDto.getCustomerDTO()));
+		savingAccount.setCustomer(this.fromCustomerDto(savingBankAccountDto.getCustomerDTO()));
 		return savingAccount;
 	}
 	
@@ -56,7 +56,7 @@ public class BankAccountMapperImplementation {
 	{
 		CurrentAccount currentAccount = new CurrentAccount();
 		BeanUtils.copyProperties(currentBankAccountDto, currentAccount);
-		currentAccount.setCustomer(bankAccountMapperImplementation.fromCustomerDto(currentBankAccountDto.getCustomerDTO()));
+		currentAccount.setCustomer(this.fromCustomerDto(currentBankAccountDto.getCustomerDTO()));
 		return currentAccount;
 	}
 	
@@ -66,7 +66,7 @@ public class BankAccountMapperImplementation {
 	{
 		CurrentBankAccountDto currentBankAccountDto = new CurrentBankAccountDto();
 		BeanUtils.copyProperties(currentAccount, currentBankAccountDto);
-		currentBankAccountDto.setCustomerDTO(bankAccountMapperImplementation.fromCustomer(currentAccount.getCustomer()));
+		currentBankAccountDto.setCustomerDTO(this.fromCustomer(currentAccount.getCustomer()));
 		currentBankAccountDto.setType("current account");
 		return currentBankAccountDto;
 	}
