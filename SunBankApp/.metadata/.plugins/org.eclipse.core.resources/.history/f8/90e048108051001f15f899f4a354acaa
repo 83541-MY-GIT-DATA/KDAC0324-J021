@@ -1,5 +1,0 @@
-package com.sunBank.repositories;
-
-public interface CustomerRepository {
-
-}
