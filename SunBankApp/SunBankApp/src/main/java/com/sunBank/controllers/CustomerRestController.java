@@ -79,15 +79,7 @@ public class CustomerRestController {
 	{
 		return bankAccountService.getCustomerByName(name);
 	}
-	
-//	// display customers by search 
-	@PostAuthorize("hasAuthority('ADMIN')")
-	@GetMapping("/customers/search")
-	public CustomersDto getCustomerByName(@RequestParam(name = "keyword",defaultValue = "") String keyword,@RequestParam(name = "page",defaultValue = "0") int page) throws CustomerNotFoundException
-	{
-		CustomersDto customersDto = bankAccountService.getCustomerByName("%" + keyword + "%", page);
-		return customersDto;
-	}
+
 	
 	// save customer
 	@PostMapping("/customers/save")

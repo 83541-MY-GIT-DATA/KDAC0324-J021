@@ -257,26 +257,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 		return dtoMapper.fromCustomer(customer);
 	}
 
-	
-	/// get Customer by keyword and page 
-	@Override
-	public CustomersDto getCustomerByName(String keyword, int page) throws CustomerNotFoundException {
-		Page<Customer> customers;
-		
-		customers = customerRepository.searchByName(keyword, PageRequest.of(page, 5));
-		
-		List<CustomerDto> customerDtos = customers.getContent().stream().map(c -> dtoMapper.fromCustomer(c))
-				.collect(Collectors.toList());	
-		
-		if(customers == null)
-			throw new CustomerNotFoundException("Customer not found");
-		
-		CustomersDto customersDto = new CustomersDto();
-		customersDto.setCustomersDto(customerDtos);
-		customersDto.setTotalPage(customers.getTotalPages());
-		
-		return customersDto;
-	}
+
 
 	// account operation History 
 	@Override

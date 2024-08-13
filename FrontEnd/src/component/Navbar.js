@@ -16,10 +16,10 @@ const Navbar = () => {
     console.log(localStorage.getItem("JWT_TOKEN"));
     localStorage.removeItem("JWT_TOKEN");
     console.log(localStorage.getItem("JWT_TOKEN"));
-    // const st = window.confirm("Do you want to log out?");
     console.log("Dispatching clearCurrentUser");
     dispatch(clearCurrentUser());
     sessionStorage.removeItem("CUSTOMER");
+    sessionStorage.removeItem("ADMIN");
     console.log("Navigating to login page");
     navigate("/login");
   };
@@ -27,7 +27,7 @@ const Navbar = () => {
   if (loginUser != null || admin != null) {
     return (
       <>
-        <nav className="navbar navbar-expand-lg navbar-light bg-warning mynav">
+        <nav className="navbar navbar-expand-lg navbar-light bg-danger mynav">
           <div className="container-fluid">
             <Link className="navbar-brand text-white" to="/">
               <i class="fa-solid fa-building-columns"></i>SunBank
@@ -104,10 +104,12 @@ const Navbar = () => {
   } else {
     return (
       <>
-        <nav className="navbar navbar-expand-lg navbar-light bg- mynav">
+        <nav className="navbar navbar-expand-lg navbar-light bg-danger mynav">
           <div className="container-fluid">
             <Link className="navbar-brand text-white" to="/">
-              <i class="fa-solid fa-building-columns"></i>SunBank
+              {/* <i class="fa-solid fa-building-columns"></i> */}
+              <i class="fa-solid fa-bank sunbank-icon"></i>
+              SunBank
             </Link>
             <button
               className="navbar-toggler"
