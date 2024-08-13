@@ -1,0 +1,5 @@
+package com.sunBank.security.services.configurations;
+
+public class SecurityConfig extends {
+
+}

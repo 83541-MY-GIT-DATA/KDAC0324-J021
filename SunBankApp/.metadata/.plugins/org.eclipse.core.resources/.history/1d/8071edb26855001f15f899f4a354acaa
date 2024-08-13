@@ -1,0 +1,84 @@
+package com.sunBank.controllers;
+
+import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.itextpdf.text.DocumentException;
+import com.sunBank.dtos.AccountHistoryDto;
+import com.sunBank.dtos.BankAccountDto;
+import com.sunBank.dtos.BankAccountsDto;
+import com.sunBank.dtos.DebitDto;
+import com.sunBank.exceptions.BankAccountNotFound;
+import com.sunBank.services.BankAccountServiceImpl;
+import com.sunBank.services.BankStatement;
+
+@RestController
+public class BankAccountRestController {
+	
+	@Autowired
+	private BankAccountServiceImpl bankAccountServiceImpl;
+	
+	@Autowired
+	private BankStatement bankStatement;
+	
+	// display account using id
+	@GetMapping("/accounts/{accountId}")
+	public BankAccountDto getBankAccount(@PathVariable String accountId) throws BankAccountNotFound
+	{
+		return bankAccountServiceImpl.getBankAccount(accountId);
+	}
+	
+	// display account using page size
+	@GetMapping("/Account/searchAccount")
+	public BankAccountsDto getBankAccount(@RequestParam(name = "page",defaultValue = "0")int page) throws BankAccountNotFound
+	{
+		return bankAccountServiceImpl.getBankAccountList(page);
+	}
+	
+	// display account using bank account operations 
+	@GetMapping("/accounts/{accountId}/pageOperations")
+	public AccountHistoryDto getBankAccountOperations(@PathVariable String accountId,
+			@RequestParam(name = "page",defaultValue = "0")int page,
+			@RequestParam(name = "size",defaultValue = "5")int size) throws BankAccountNotFound
+	{
+		return bankAccountServiceImpl.getAccountHistory(accountId, page, size);
+	}
+	
+	// update  bank account 
+	@PutMapping("/accounts/{accountId}")
+	public BankAccountDto updateAccount(@PathVariable String accountId,@RequestBody BankAccountDto bankAccountDto)
+	{
+		bankAccountDto.setId(accountId);
+		return bankAccountServiceImpl.updateBankAccount(bankAccountDto);
+	}
+	
+	// generate bank account 
+	@GetMapping("/statement")
+	public ResponseEntity<?> generateBankStatement(@RequestParam String accountNumber , HttpServletRequest request)
+			throws FileNotFoundException,ParseException,DocumentException
+	{
+		System.out.println(request.getHeader("Authorization"));
+		bankStatement.generateStatement(accountNumber);
+		return ResponseEntity.status(200).body(null);
+	}
+	
+	// withdraw request 
+	@GetMapping("/withdrawrequest")
+	public List<DebitDto> withDrawRequest()
+	{
+		//return BankAccountServiceImpl.
+		return null;
+	}
+}

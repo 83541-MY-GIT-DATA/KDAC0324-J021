@@ -1,0 +1,32 @@
+package com.sunBank.security.entities;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+
+import org.hibernate.annotations.Fetch;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
+
+public class AppUser {
+	
+	@Id
+	@GeneratedValue()
+	private Long id;
+	
+	private String userName;
+	
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private String password;
+	
+	// many roles and many users
+	@ManyToMany(fetch = FetchType.EAGER)
+	private Collection<AppRole> roles = new ArrayList<AppRole>();
+	
+}

@@ -1,0 +1,10 @@
+package com.sunBank.security.entities;
+
+import javax.persistence.*;
+
+public class AppRole {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+}

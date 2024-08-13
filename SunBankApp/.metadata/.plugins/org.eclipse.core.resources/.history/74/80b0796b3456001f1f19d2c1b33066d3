@@ -1,0 +1,20 @@
+package com.sunBank.security.filters;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.sunBank.security.repositories.AppUserRepository;
+
+public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+	
+	private AuthenticationManager authenticationManager;
+	
+	private AppUserRepository appUserRepository;
+	
+	public JwtAuthenticationFilter(AuthenticationManager authenticationManager,AppUserRepository appUserRepository)
+	{
+		this.authenticationManager = authenticationManager;
+		this.appUserRepository = appUserRepository;
+	}
+
+}

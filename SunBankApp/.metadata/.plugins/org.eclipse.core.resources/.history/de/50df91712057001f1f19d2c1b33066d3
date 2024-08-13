@@ -1,0 +1,53 @@
+package com.sunBank.security.services.configurations;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.sunBank.security.filters.JwtAuthenticationFilter;
+
+@Configuration  // to tell sc this is config class 
+public class SecurityConfig {
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
+	
+	@Autowired
+	private CustomAuthenicationEntryPoint customAuthenicationEntryPoint;
+	
+	
+	@Bean
+	public SecurityFilterChain authorizeRequests(HttpSecurity http)  throws Exception
+	{
+		http.cors().and().cors().disable()
+		.exceptionHandling().authenticationEntryPoint(customAuthenicationEntryPoint)
+		.and()
+		.antMatchers("/refreshToken/**","/login/**","/customers/save","/verifyOtp","/changepassword","/statement").permitAll()
+		.anyRequest().authenticated()
+		.and()
+		.formLogin()
+		.and()
+		.sessionManagement()
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		.and()
+		.addFilterBefore(jwtAuthenticationFilter,UsernamePasswordAuthenticationFilter.class);
+		
+		return http.build();
+	}
+	
+	// configure authentication manager 
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception
+	{
+		return config.getAuthenticationManager();
+	}
+}

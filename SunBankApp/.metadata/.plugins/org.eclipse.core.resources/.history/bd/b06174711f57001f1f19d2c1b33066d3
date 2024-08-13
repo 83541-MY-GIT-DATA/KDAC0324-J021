@@ -1,0 +1,33 @@
+package com.sunBank.security.services.configurations;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+import com.sunBank.security.filters.JwtAuthenticationFilter;
+
+@Configuration  // to tell sc this is config class 
+public class SecurityConfig {
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
+	
+	@Autowired
+	private CustomAuthenicationEntryPoint customAuthenicationEntryPoint;
+	
+	
+	@Bean
+	public SecurityFilterChain authorizeRequests(HttpSecurity http)  throws Exception
+	{
+		http.cors().and().cors().disable()
+		.exceptionHandling().authenticationEntryPoint(customAuthenicationEntryPoint)
+		.and()
+		.authorizeRequests()
+		..antMatchers("/refreshToken/**","/login/**","/customers/save","/verifyOtp","/changepassword","/statement").permitAll().anyRequest().authenticated();
+	}
+}

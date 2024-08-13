@@ -1,0 +1,21 @@
+package com.sunBank.security.entities;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+public class AppUser {
+	
+	@Id
+	@GeneratedValue()
+	private Long id;
+	
+	private String userName;
+	
+	private String password;
+	
+	private Collection<AppRole> roles = new ArrayList<AppRole>();
+}

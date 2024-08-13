@@ -1,0 +1,7 @@
+package com.sunBank.security.services.configurations;
+
+import org.springframework.security.web.AuthenticationEntryPoint;
+
+public class CustomAuthenicationEntryPoint implements AuthenticationEntryPoint {
+	
+}

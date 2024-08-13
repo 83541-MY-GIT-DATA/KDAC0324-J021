@@ -13,6 +13,7 @@ import com.sunBank.dtos.CustomerDto;
 import com.sunBank.dtos.CustomersDto;
 import com.sunBank.dtos.SavingBankAccountDto;
 import com.sunBank.entities.Customer;
+import com.sunBank.exceptions.BalanceNotSufficientException;
 import com.sunBank.exceptions.BankAccountNotFound;
 import com.sunBank.exceptions.CustomerNotFoundException;
 
@@ -29,6 +30,13 @@ public interface BankAccountService {
 	List<Customer> listCustomer();
 	
 	List<BankAccountDto> bankAccountListOfCustomer(Long customerId);
+	
+	
+	void debit (String accountId,double amount,String description,String upiId) throws BalanceNotSufficientException , BankAccountNotFound;
+	
+	void credit(String accountId,double amount,String description) throws BankAccountNotFound;
+	
+	void transfer(String accountIdSource , String accountIdDestination , double amount, String description) throws BalanceNotSufficientException , BankAccountNotFound;
 	
 	BankAccountDto getBankAccount(String accountId) throws BankAccountNotFound;
 	

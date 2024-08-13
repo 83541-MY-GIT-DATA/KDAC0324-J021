@@ -1,0 +1,88 @@
+package com.sunBank;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
+import java.util.stream.Stream;
+
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import com.fasterxml.jackson.core.sym.Name;
+import com.sunBank.dtos.CustomerDto;
+import com.sunBank.entities.CurrentAccount;
+import com.sunBank.enums.AccountStatus;
+import com.sunBank.exceptions.CustomerNotFoundException;
+import com.sunBank.repositories.AccountOperationRepository;
+import com.sunBank.repositories.BankAccountRepository;
+import com.sunBank.repositories.CustomerRepository;
+import com.sunBank.security.entities.AppRole;
+import com.sunBank.security.entities.AppUser;
+import com.sunBank.security.services.AccountService;
+import com.sunBank.services.BankAccountService;
+
+@SpringBootApplication
+public class Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+
+	//@Bean // equivalent to <bean id ..../> in xml file
+	public ModelMapper mapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT)
+				.setPropertyCondition(Conditions.isNotNull());
+		return modelMapper;
+	}
+	
+	//@Bean
+	CommandLineRunner commandLineRunner (BankAccountService bankAccountService,AccountService accountService)
+	{
+		return args ->
+		{
+			accountService.addNewRole(new AppRole(null,"ADMIN"));
+			accountService.addNewRole(new AppRole(null,"CUSTOMER"));
+			accountService.addNewUser(new AppUser(null,"admin","1234",new ArrayList<>()));
+			
+			
+			accountService.addRoleToUser("admin","ADMIN");
+			
+			Stream.of("Bhagesh","Sham","Tushar","Mehul").forEach(name -> {
+				CustomerDto customerDto = new CustomerDto();
+				customerDto.setName(name);
+				customerDto.setEmail(name + "@gmail.com");
+				try {
+					bankAccountService.saveCustomer(customerDto);
+				} catch (CustomerNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			});
+		};
+	}
+	
+	CommandLineRunner start(CustomerRepository customerRepository,BankAccountRepository bankAccountRepository,
+			AccountOperationRepository accountOperationRepository)
+	{
+		return args ->
+		{
+			customerRepository.findAll().forEach(cust ->{
+				CurrentAccount currentAccount = new CurrentAccount();
+				currentAccount.setId(UUID.randomUUID().toString());
+				currentAccount.setBalance(Math.random()*90000);
+				currentAccount.setCreatedAt(new Date());
+				currentAccount.setStatus(AccountStatus.CREATED);
+				currentAccount.setCustomer(cust);
+				currentAccount.setOverDraft(9000);
+				bankAccountRepository.save(currentAccount);
+			});
+		};
+	}
+	
+
+}

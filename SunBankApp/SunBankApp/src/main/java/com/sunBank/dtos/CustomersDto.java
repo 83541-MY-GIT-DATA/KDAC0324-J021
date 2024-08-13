@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class CustomersDto {
 
-	List<CustomerDto> customerDTO;
-	int totalpage;
-	
+	List<CustomerDto> customersDto;
+	int totalPage;
 }

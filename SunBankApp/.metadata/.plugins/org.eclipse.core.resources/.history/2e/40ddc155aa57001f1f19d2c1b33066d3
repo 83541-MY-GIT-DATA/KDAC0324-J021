@@ -1,0 +1,137 @@
+package com.sunBank.controllers;
+
+import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.itextpdf.text.DocumentException;
+import com.sunBank.dtos.AccountHistoryDto;
+import com.sunBank.dtos.AccountOperationDto;
+import com.sunBank.dtos.BankAccountDto;
+import com.sunBank.dtos.BankAccountsDto;
+import com.sunBank.dtos.CreditDto;
+import com.sunBank.dtos.DebitDto;
+import com.sunBank.exceptions.BalanceNotSufficientException;
+import com.sunBank.exceptions.BankAccountNotFound;
+import com.sunBank.services.BankAccountServiceImpl;
+import com.sunBank.services.BankStatement;
+
+@RestController
+@CrossOrigin("*")
+public class BankAccountRestController {
+	
+	@Autowired
+	private BankAccountServiceImpl bankAccountServiceImpl;
+	
+	@Autowired
+	private BankStatement bankStatement;
+	
+	// display account using id
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
+	@GetMapping("/accounts/{accountId}")
+	public BankAccountDto getBankAccount(@PathVariable String accountId) throws BankAccountNotFound
+	{
+		return bankAccountServiceImpl.getBankAccount(accountId);
+	}
+	
+	// display account using page size
+	@PostAuthorize("hasAuthority('ADMIN')")
+	@GetMapping("/Account/searchAccount")
+	public BankAccountsDto getBankAccount(@RequestParam(name = "page",defaultValue = "0")int page) throws BankAccountNotFound
+	{
+		return bankAccountServiceImpl.getBankAccountList(page);
+	}
+	
+	// display account using bank account operations 
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
+	@GetMapping("/accounts/{accountId}/pageOperations")
+	public AccountHistoryDto getBankAccountOperations(@PathVariable String accountId,
+			@RequestParam(name = "page",defaultValue = "0")int page,
+			@RequestParam(name = "size",defaultValue = "5")int size) throws BankAccountNotFound
+	{
+		return bankAccountServiceImpl.getAccountHistory(accountId, page, size);
+	}
+	
+	//debit controller 
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
+	@PostMapping("/operations/Debit")
+	public AccountOperationDto debit(@RequestBody AccountOperationDto accountOperationDto) throws BankAccountNotFound , BalanceNotSufficientException
+	{
+		this.bankAccountServiceImpl.debit(accountOperationDto.getAccountId(),accountOperationDto.getAmount(),accountOperationDto.getDescription(),"fromaccountoperationsdto");
+		return accountOperationDto;
+	}
+	
+	// credit controller
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
+	@PostMapping("/operations/Credit")
+	public AccountOperationDto credit(@RequestBody AccountOperationDto accountOperationDto) throws BankAccountNotFound , BalanceNotSufficientException
+	{
+		this.bankAccountServiceImpl.credit(accountOperationDto.getAccountId(),accountOperationDto.getAmount(), accountOperationDto.getDescription());
+		return accountOperationDto;
+	}
+	
+	// transfer controller 
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
+	@PostMapping("/operations/Transfers")
+	public void transfers(@RequestParam(name = "idSource")String idSource,@RequestParam(name = "idDestination") String idDestination,
+			@RequestParam(name = "amount") double amount,@RequestParam(name = "description") String description) throws BalanceNotSufficientException , BankAccountNotFound
+	{
+		this.bankAccountServiceImpl.transfer(idSource, idDestination, amount, description);
+	}
+	
+	// debit controller for debit dto
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
+	@PostMapping("/accounts/debit")
+	public DebitDto debit(@RequestBody DebitDto debitDto) throws BankAccountNotFound , BalanceNotSufficientException
+	{
+		this.bankAccountServiceImpl.debit(debitDto.getAccountId(),debitDto.getAmount(),debitDto.getDescription(),debitDto.getUpiId());
+		return debitDto;
+	}
+	
+	// credit controller for debit dto
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
+	@PostMapping("/accounts/debit")
+	public CreditDto credit(@RequestBody)
+	
+	// update  bank account 
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
+	@PutMapping("/accounts/{accountId}")
+	public BankAccountDto updateAccount(@PathVariable String accountId,@RequestBody BankAccountDto bankAccountDto)
+	{
+		bankAccountDto.setId(accountId);
+		return bankAccountServiceImpl.updateBankAccount(bankAccountDto);
+	}
+	
+	// generate bank account 
+	@GetMapping("/statement")
+	public ResponseEntity<?> generateBankStatement(@RequestParam String accountNumber , HttpServletRequest request)
+			throws FileNotFoundException,ParseException,DocumentException
+	{
+		System.out.println(request.getHeader("Authorization"));
+		bankStatement.generateStatement(accountNumber);
+		return ResponseEntity.status(200).body(null);
+	}
+	
+	// withdraw request 
+	@PostAuthorize("hasAuthority('ADMIN')")
+	@GetMapping("/withdrawrequest")
+	public List<DebitDto> withDrawRequest()
+	{
+		//return BankAccountServiceImpl.
+		return null;
+	}
+}

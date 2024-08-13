@@ -1,0 +1,20 @@
+package com.sunBank.security.services.configurations;
+
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.servers.Server;
+
+@OpenAPIDefinition(info = @Info(title = "SunBank Digital System Services",
+							description = "This is api for banking systems",
+							termsOfService = "Terms and Condition applied ...",
+							contact = @Contact(name = "Develop By Bhagesh",
+											email = "bhageshchincholi5051@gmail.com"),
+							license = @License(name = "bhagesh licence "),
+							version = "Api/V1"),
+							servers = {@Server(description = "testEnv"),url="http://localhost:8080"})
+public class SwaggerConfiguration {
+
+}
