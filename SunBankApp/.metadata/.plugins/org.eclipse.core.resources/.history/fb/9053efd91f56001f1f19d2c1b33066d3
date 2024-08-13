@@ -1,0 +1,25 @@
+package com.sunBank.security.services;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.sunBank.security.entities.AppUser;
+
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+	private AccountService accountService;
+	
+	public UserDetailsServiceImpl(AccountService accountService)
+	{
+		this.accountService = accountService;
+	}
+	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		AppUser appUser = accountService.loadUserByUsername(username);
+	}
+
+}

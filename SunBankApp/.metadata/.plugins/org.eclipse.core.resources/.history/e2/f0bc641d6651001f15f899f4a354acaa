@@ -1,0 +1,13 @@
+package com.sunBank.entities;
+
+import javax.persistence.Entity;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@Entity
+public class CurrentAccount extends BankAccount {
+	
+	private double overDraft;
+}

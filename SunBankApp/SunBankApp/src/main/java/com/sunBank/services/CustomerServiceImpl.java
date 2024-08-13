@@ -3,13 +3,48 @@ package com.sunBank.services;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.sunBank.dtos.ChangePasswordRequestDto;
+import com.sunBank.dtos.ChangePasswordResponseDto;
 import com.sunBank.entities.Customer;
 import com.sunBank.repositories.CustomerRepository;
+import com.sunBank.security.entities.AppUser;
+import com.sunBank.security.repositories.AppUserRepository;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@Slf4j
 public class CustomerServiceImpl implements CustomerService {
+	
+	@Autowired
+	private AppUserRepository appUserRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Override
+	public ChangePasswordResponseDto changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
+		
+		String userName = changePasswordRequestDto.getName();
+		
+		AppUser appUser = appUserRepository.findAppUserByUsername(userName);
+		
+		String pw = changePasswordRequestDto.getPassword();
+		
+		appUser.setPassword(passwordEncoder.encode(pw));
+		
+		appUserRepository.save(appUser);
+		
+		ChangePasswordResponseDto changePasswordResponseDto = new ChangePasswordResponseDto();
+		
+		changePasswordResponseDto.setMessage("Your password changed successfully !!");
+		
+		return changePasswordResponseDto;
+	}
+	
 	
 }

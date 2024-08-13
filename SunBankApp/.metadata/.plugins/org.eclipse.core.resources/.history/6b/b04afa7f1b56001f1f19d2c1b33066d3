@@ -1,0 +1,14 @@
+package com.sunBank.security.services;
+
+import com.sunBank.security.entities.AppUser;
+
+public class AccountServiceImpl implements AccountService{
+
+	
+	@Override
+	public AppUser addNewUser(AppUser appUser) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

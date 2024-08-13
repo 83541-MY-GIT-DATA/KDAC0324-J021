@@ -1,0 +1,9 @@
+package com.sunBank.security.services;
+
+import com.sunBank.security.entities.AppUser;
+
+public interface AccountService {
+	AppUser addNewUser(AppUser appUser);
+	
+	voide deleteUser(Long id);
+}

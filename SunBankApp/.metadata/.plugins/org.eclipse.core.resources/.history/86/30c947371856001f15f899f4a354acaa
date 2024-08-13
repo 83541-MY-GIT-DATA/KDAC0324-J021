@@ -1,0 +1,5 @@
+package com.sunBank.security.utilities;
+
+public class JWTUtil {
+	public static final String SECRET = "Xv2zSb74jazC@sjhdjhd78&23%ZQX&$)(##@)_+|";
+}

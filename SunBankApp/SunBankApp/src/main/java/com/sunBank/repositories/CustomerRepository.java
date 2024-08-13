@@ -15,7 +15,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>{
 	
 	Customer getCustomerByName(String name);
 	
-	@Query("Select c from Customer where c.name like :mn")
+	@Query("Select c from Customer c where c.name like : nm")
 	Page<Customer> searchByName(@Param("mn")String keyword, Pageable pageable);
 	
 	Page<Customer> findAll(Pageable pageable);

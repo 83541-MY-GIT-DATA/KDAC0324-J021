@@ -1,0 +1,11 @@
+package com.sunBank.security.entities;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+public class AppUser {
+	
+	@Id
+	@GeneratedValue()
+	private Long id;
+}

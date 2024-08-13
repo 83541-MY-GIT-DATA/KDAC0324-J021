@@ -1,0 +1,8 @@
+package com.sunBank.security.services.configurations;
+
+import org.springframework.context.annotation.Configuration;
+
+@Configuration  // to tell sc this is config class 
+public class SecurityConfig {
+
+}

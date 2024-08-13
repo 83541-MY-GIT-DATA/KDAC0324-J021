@@ -1,0 +1,46 @@
+package com.sunBank.security.services.configurations;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+import com.sunBank.security.filters.JwtAuthenticationFilter;
+import com.sunBank.security.repositories.AppUserRepository;
+import com.sunBank.security.services.UserDetailsServiceImpl;
+
+@Configuration
+@EnableWebSecurity
+@CrossOrigin("*")
+public class SecurityConfig {
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JwtAuthenticationFilter jwtFilter;
+	
+	@Autowired
+	private UserDetailsServiceImpl userDetailsServiceImpl;
+	
+	@Autowired
+	private AppUserRepository appUserRepository;
+	
+	@Autowired
+	private CustomAuthenicationEntryPoint customAuthenicationEntryPoint;
+	
+	@Bean
+	public SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception
+	{
+		// disable CSRF token generation and verification 
+		http.cors().and().csrf().disable().exceptionHandling()
+		.authenticationEntryPoint(customAuthenicationEntryPoint).and()
+		.authorizeRequests()
+		.antMatchers("/refreshToken/**","/login/**,"/customers/save","/verifyOtp","/changepassword")
+	}
+	
+}

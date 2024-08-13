@@ -1,0 +1,47 @@
+package com.sunBank.security.services;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.sunBank.security.entities.AppUser;
+import com.sunBank.security.repositories.AppRoleRepository;
+import com.sunBank.security.repositories.AppUserRepository;
+
+@Service
+@Transactional
+public class AccountServiceImpl implements AccountService{
+	
+	@Autowired
+	private AppUserRepository appUserRepository;
+	
+	@Autowired
+	private AppRoleRepository appRoleRepository;
+	
+	private PasswordEncoder passwordEncoder;
+	
+	
+	public AccountServiceImpl(AppUserRepository appUserRepository,AppRoleRepository appRoleRepository,PasswordEncoder passwordEncoder)
+	{
+		this.appRoleRepository = appRoleRepository;
+		this.appUserRepository = appUserRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
+	// addNew User
+	@Override
+	public AppUser addNewUser(AppUser appUser) {
+		String pw = appUser.getPassword();
+		appUser.setPassword(passwordEncoder.encode(pw));  // encode the password here 
+		return appUserRepository.save(appUser);
+	}
+	
+	// delete user 
+	@Override
+	public void deleteUser(Long id) {
+		
+		
+	}
+
+}

@@ -3,6 +3,9 @@ package com.sunBank.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,17 +16,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sunBank.dtos.BankAccountDto;
+import com.sunBank.dtos.ChangePasswordRequestDto;
+import com.sunBank.dtos.ChangePasswordResponseDto;
 import com.sunBank.dtos.CustomerDto;
 import com.sunBank.dtos.CustomersDto;
 import com.sunBank.dtos.OtpDto;
 import com.sunBank.dtos.OtpRequestDto;
+import com.sunBank.entities.Customer;
 import com.sunBank.exceptions.CustomerNotFoundException;
 import com.sunBank.repositories.CustomerRepository;
 import com.sunBank.services.BankAccountService;
 import com.sunBank.services.CustomerService;
 import com.sunBank.services.EmailService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
+@Slf4j
+@CrossOrigin("*")
 public class CustomerRestController {
 	
 	@Autowired
@@ -39,6 +49,7 @@ public class CustomerRestController {
 	private CustomerRepository customerRepository;
 	
 	// display customers using page 
+	@PreAuthorize("permitAll()")
 	@GetMapping("/customers/all/{page}")
 	public List<CustomerDto> customers(@PathVariable int page)
 	{
@@ -46,6 +57,7 @@ public class CustomerRestController {
 	}
 	
 	// display account list of customer  using id 
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
 	@GetMapping("/customers/{id}/accounts")
 	public List<BankAccountDto> accountsListOfCustomer(@PathVariable (name = "id") Long customerId)
 	{
@@ -53,6 +65,7 @@ public class CustomerRestController {
 	}
 	
 	// display customers using id
+	@PostAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
 	@GetMapping("/customers/{id}")
 	public CustomerDto getCustomer(@PathVariable (name = "id") Long customerId) throws CustomerNotFoundException
 	{
@@ -60,13 +73,15 @@ public class CustomerRestController {
 	}
 	
 	// display customers by name 
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
 	@GetMapping("/customers/name/{name}")
 	public CustomerDto getCustomerByname(@PathVariable(name = "name") String name)
 	{
 		return bankAccountService.getCustomerByName(name);
 	}
 	
-	// display customers by search 
+//	// display customers by search 
+	@PostAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/customers/search")
 	public CustomersDto getCustomerByName(@RequestParam(name = "keyword",defaultValue = "") String keyword,@RequestParam(name = "page",defaultValue = "0") int page) throws CustomerNotFoundException
 	{
@@ -82,6 +97,7 @@ public class CustomerRestController {
 	}
 	
 	// update customer 
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
 	@PutMapping("/customers/{customerId}")
 	public CustomerDto updateCustomer(@PathVariable Long customerId,@RequestBody CustomerDto customerDto)
 	{
@@ -90,6 +106,7 @@ public class CustomerRestController {
 	}
 	
 	// delete customer 
+	@PostAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER')")
 	@DeleteMapping("/customers/{customerId}")
 	public void deleteCustomer(@PathVariable Long customerId)
 	{
@@ -101,6 +118,23 @@ public class CustomerRestController {
 	public OtpDto generateOTP(@RequestBody OtpRequestDto otpReqDto)
 	{
 		return emailService.getOTP(otpReqDto);
+	}
+	
+	@PostMapping("/changePassword")
+	public ChangePasswordResponseDto changePassword(@RequestBody ChangePasswordRequestDto changePasswordRequestDto)
+	{
+		System.out.println(changePasswordRequestDto.toString());
+		if(changePasswordRequestDto.getName().equals("abc"))
+		{
+			System.out.println("Inside passord statement");
+			Customer customer = customerRepository.findByEmail(changePasswordRequestDto.getEmail());
+			System.out.println(customer);
+			changePasswordRequestDto.setName(customer.getName());  // to set the customer name 
+			
+			return customerService.changePassword(changePasswordRequestDto);   // change passsword 
+		}
+		
+		return customerService.changePassword(changePasswordRequestDto);
 	}
 	
 }

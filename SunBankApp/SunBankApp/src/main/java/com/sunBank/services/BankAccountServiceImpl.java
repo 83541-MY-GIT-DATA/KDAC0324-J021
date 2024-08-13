@@ -2,7 +2,9 @@ package com.sunBank.services;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,19 +26,25 @@ import com.sunBank.dtos.BankAccountsDto;
 import com.sunBank.dtos.CurrentBankAccountDto;
 import com.sunBank.dtos.CustomerDto;
 import com.sunBank.dtos.CustomersDto;
+import com.sunBank.dtos.DebitDto;
 import com.sunBank.dtos.EmailDetails;
+import com.sunBank.dtos.FdDto;
 import com.sunBank.dtos.SavingBankAccountDto;
 import com.sunBank.entities.AccountOperation;
 import com.sunBank.entities.BankAccount;
 import com.sunBank.entities.CurrentAccount;
 import com.sunBank.entities.Customer;
 import com.sunBank.entities.SavingAccount;
+import com.sunBank.enums.OperationType;
+import com.sunBank.exceptions.BalanceNotSufficientException;
 import com.sunBank.exceptions.BankAccountNotFound;
 import com.sunBank.exceptions.CustomerNotFoundException;
 import com.sunBank.mappers.BankAccountMapperImplementation;
 import com.sunBank.repositories.AccountOperationRepository;
 import com.sunBank.repositories.BankAccountRepository;
 import com.sunBank.repositories.CustomerRepository;
+import com.sunBank.security.entities.AppUser;
+import com.sunBank.security.services.AccountService;
 import com.sunBank.utils.AccountUtils;
 
 
@@ -44,6 +52,8 @@ import com.sunBank.utils.AccountUtils;
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
 
+	public static ArrayList<DebitDto> debitList = new ArrayList<>();
+	public static HashMap<String,FdDto> fdMap = new HashMap<String, FdDto>();
 	@Autowired
 	@Order(1)
 	private CustomerRepository customerRepository;
@@ -61,6 +71,9 @@ public class BankAccountServiceImpl implements BankAccountService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	AccountService accountService;
 	
 	// working on save customer 
 	@Override
@@ -80,7 +93,13 @@ public class BankAccountServiceImpl implements BankAccountService {
 		
 		executorService.shutdown();
 		
-		return null;
+		AppUser appUser = new AppUser(null,customer.getName(),customer.getEmail(),new ArrayList<>());
+		accountService.addNewUser(appUser);
+		accountService.addRoleToUser(customer.getName(),"CUSTOMER");
+		saveCurrentBankAccount(Math.random()*90000,9000,customer.getId());
+		saveSavingBankAccount(Math.random()*120000,5.5,customer.getId());
+		
+		return dtoMapper.fromCustomer(customer);
 	}
 	
 	
@@ -239,7 +258,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 	}
 
 	
-	/// get Customr by keyword and page 
+	/// get Customer by keyword and page 
 	@Override
 	public CustomersDto getCustomerByName(String keyword, int page) throws CustomerNotFoundException {
 		Page<Customer> customers;
@@ -321,6 +340,118 @@ public class BankAccountServiceImpl implements BankAccountService {
 		}).collect(Collectors.toList());
 		
 		return bankAccountDtos;
+	}
+
+	// debit the amount 
+	@Override
+	public synchronized void debit(String accountId, double amount, String description, String upiId)
+			throws BalanceNotSufficientException, BankAccountNotFound {
+		// find account first 
+		BankAccount bankAccount = bankAccountRepository.findById(accountId).orElseThrow(()-> new BankAccountNotFound("Accounnt Not Found"));
+		// if account balance is less than amount 
+		if(bankAccount == null)
+			throw new BankAccountNotFound("Account not found");
+		
+		if(bankAccount.getBalance() < amount)
+		{
+			throw new BalanceNotSufficientException("Balance not sufficient !!");
+		}
+		
+		// to changes the account operation status 
+		AccountOperation accountOperation = new AccountOperation();
+		accountOperation.setOperationType(OperationType.DEBIT);
+		bankAccount.setBalance(bankAccount.getBalance() - amount);
+		accountOperation.setBankAccount(bankAccount);
+		accountOperation.setOperationDate(new Date());
+		accountOperation.setDescription(description);
+		accountOperation.setAmount(amount);
+		
+		// save inside bank account repository 
+		bankAccountRepository.save(bankAccount);
+		
+		// save inside account operation repository 
+		accountOperationRepository.save(accountOperation);
+		
+		// to add debit history into debit list 
+		debitList.add(new DebitDto(accountId, amount, description, upiId));
+		
+		// if it is contains fd then it will check 
+		if(description.contains("FD"))
+		{
+			FdDto fdDto = new FdDto();
+			fdDto.setAccountId(accountId);
+			fdDto.setAmount(amount);
+			fdDto.setDescription(description);
+			// add data inside fdmap 
+			fdMap.put(accountId, fdDto);
+		}
+		
+		ExecutorService executorService = Executors.newSingleThreadExecutor();
+		executorService.submit(()->{
+			// send the email notification 
+			EmailDetails emailDetails = EmailDetails.builder().recipient(bankAccount.getCustomer().getEmail())
+					.subject("Amount Debited ").messageBody(amount+" .Rs debited from your account No : " + bankAccount.getId()
+					+".\n Current Balance : "+bankAccount.getBalance()).build();
+			
+			emailService.sendEmailAlert(emailDetails);
+		});
+		
+		executorService.shutdown();
+	}
+
+	// credit the amount
+	@Override
+	public synchronized void credit(String accountId, double amount, String description) throws BankAccountNotFound {
+		BankAccount bankAccount = bankAccountRepository.findById(accountId).orElseThrow(()-> new BankAccountNotFound("Account Not Found"));
+		if(bankAccount == null)
+			throw new BankAccountNotFound("Account not found");
+		
+		//account operation 
+		AccountOperation accountOperation = new AccountOperation();
+		accountOperation.setOperationType(OperationType.CREDIT);
+		accountOperation.setOperationDate(new Date());
+		bankAccount.setBalance(bankAccount.getBalance()+amount);
+		accountOperation.setBankAccount(bankAccount);
+		accountOperation.setAmount(amount);
+		accountOperation.setDescription(description);
+		
+		// save inside bank account repo 
+		bankAccountRepository.save(bankAccount);
+		
+		// save inside account operation repo 
+		accountOperationRepository.save(accountOperation);
+		
+		ExecutorService executorService = Executors.newSingleThreadExecutor();
+		
+		executorService.submit(()->{
+			// send the email notification 
+			EmailDetails emailDetails = EmailDetails.builder().recipient(bankAccount.getCustomer().getEmail())
+					.subject("Amount Credited ").messageBody(amount + " .Rs Credited to your account No : "
+							+bankAccount.getId() + ".\n Current Balance : "+bankAccount.getBalance()).build();
+			
+			emailService.sendEmailAlert(emailDetails);
+		});
+		
+		executorService.shutdown();
+	}
+
+
+	@Override
+	public void transfer(String accountIdSource, String accountIdDestination, double amount, String description)
+			throws BankAccountNotFound, BalanceNotSufficientException {
+		BankAccount bankAccount = bankAccountRepository.findById(accountIdSource).orElseThrow(()-> new BankAccountNotFound("Account Not found"));
+		BankAccount bankAccount1 = bankAccountRepository.findById(accountIdDestination).orElseThrow(()-> new BankAccountNotFound("Account not found"));
+		if(bankAccount == null || bankAccount1 == null)
+			throw new BankAccountNotFound("Account not found");
+		AccountOperationDto accountSourceOperationDto = new AccountOperationDto();
+		accountSourceOperationDto.setAccountId(accountIdSource);
+		accountSourceOperationDto.setAmount(amount);
+		debit(accountIdSource, amount, description, "transfer");
+		
+		AccountOperationDto accountDestinationOperationDto = new AccountOperationDto();
+		accountDestinationOperationDto.setAccountId(accountIdDestination);
+		accountDestinationOperationDto.setAmount(amount);
+		credit(accountIdDestination, amount, description);
 	}
 	
 }

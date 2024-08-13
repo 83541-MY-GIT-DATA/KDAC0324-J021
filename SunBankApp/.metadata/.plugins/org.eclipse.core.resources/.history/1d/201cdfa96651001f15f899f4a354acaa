@@ -1,0 +1,13 @@
+package com.sunBank.entities;
+
+import javax.persistence.Entity;
+
+import lombok.*;
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class SavingAccount extends BankAccount {
+	private double interestRate;
+}
